@@ -8,30 +8,33 @@ const ViralClicker = () => {
   const [lastClickTime, setLastClickTime] = useState(Date.now());
   const [clickSpeed, setClickSpeed] = useState(0);
 
+  // Load personal clicks from localStorage
   useEffect(() => {
-    const loadClicks = async () => {
-      try {
-        const result = await window.storage.get('global_clicks', true);
-        if (result && result.value) {
-          setTotalClicks(parseInt(result.value));
-        }
-      } catch (error) {
-        console.log('Loading clicks...');
-      }
-    };
-    loadClicks();
+    const savedClicks = localStorage.getItem('personalClicks');
+    if (savedClicks) {
+      setClicks(parseInt(savedClicks));
+    }
 
-    const interval = setInterval(async () => {
-      try {
-        const result = await window.storage.get('global_clicks', true);
-        if (result && result.value) {
-          setTotalClicks(parseInt(result.value));
-        }
-      } catch (error) {}
-    }, 2000);
+    // Load global clicks from your backend
+    loadGlobalClicks();
 
+    // Poll for updates every 3 seconds
+    const interval = setInterval(loadGlobalClicks, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  const loadGlobalClicks = async () => {
+    try {
+      // Using a simple counter API - you'll need to set this up
+      const response = await fetch('https://api.countapi.xyz/get/thebutton-viral/clicks');
+      const data = await response.json();
+      if (data.value !== undefined) {
+        setTotalClicks(data.value);
+      }
+    } catch (error) {
+      console.log('Loading clicks...');
+    }
+  };
 
   const handleClick = async (e) => {
     const now = Date.now();
@@ -41,25 +44,32 @@ const ViralClicker = () => {
     setLastClickTime(now);
 
     const newClicks = clicks + 1;
-    const newTotal = totalClicks + 1;
     
     setClicks(newClicks);
-    setTotalClicks(newTotal);
     setShowRipple(true);
     setTimeout(() => setShowRipple(false), 600);
 
+    // Save personal clicks to localStorage
+    localStorage.setItem('personalClicks', newClicks.toString());
+
+    // Increment global counter
     try {
-      await window.storage.set('global_clicks', newTotal.toString(), true);
+      const response = await fetch('https://api.countapi.xyz/hit/thebutton-viral/clicks');
+      const data = await response.json();
+      if (data.value !== undefined) {
+        setTotalClicks(data.value);
+        
+        if (data.value % 1000 === 0) {
+          setMilestone(data.value);
+          setTimeout(() => setMilestone(null), 3000);
+          createConfetti(50);
+        } else if (data.value % 100 === 0) {
+          createConfetti(20);
+        }
+      }
     } catch (error) {
       console.log('Saving...');
-    }
-
-    if (newTotal % 1000 === 0) {
-      setMilestone(newTotal);
-      setTimeout(() => setMilestone(null), 3000);
-      createConfetti(50);
-    } else if (newTotal % 100 === 0) {
-      createConfetti(20);
+      setTotalClicks(prev => prev + 1);
     }
 
     createClickEffect(e);
