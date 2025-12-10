@@ -66,7 +66,7 @@ const ViralClicker = () => {
   };
 
   const createConfetti = (count) => {
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#FFA07A', '#98D8C8', '#F7DC6F', '#E74C3C', '#3498DB'];
+    const colors = ['#FF6B9D', '#C44569', '#FFA07A', '#FFD93D', '#6BCF7F', '#4ECDC4', '#45B7D1', '#A29BFE', '#FD79A8'];
     
     for (let i = 0; i < count; i++) {
       const confetti = document.createElement('div');
@@ -76,6 +76,7 @@ const ViralClicker = () => {
       confetti.style.animationDelay = Math.random() * 0.3 + 's';
       confetti.style.width = Math.random() * 10 + 5 + 'px';
       confetti.style.height = Math.random() * 10 + 5 + 'px';
+      confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
       document.body.appendChild(confetti);
       
       setTimeout(() => confetti.remove(), 3000);
@@ -84,19 +85,20 @@ const ViralClicker = () => {
 
   const createClickEffect = (e) => {
     const effect = document.createElement('div');
-    effect.className = 'fixed pointer-events-none text-4xl font-bold z-50';
+    effect.className = 'fixed pointer-events-none text-5xl font-black z-50';
     effect.style.left = e.clientX + 'px';
     effect.style.top = e.clientY + 'px';
     effect.style.transform = 'translate(-50%, -50%)';
     effect.textContent = '+1';
-    effect.style.color = '#60A5FA';
+    effect.style.color = '#FFD93D';
+    effect.style.textShadow = '0 0 20px rgba(255, 217, 61, 0.8)';
     effect.style.animation = 'float-up 1s ease-out forwards';
     
     const style = document.createElement('style');
     style.textContent = `
       @keyframes float-up {
         0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -150%) scale(1.5); }
+        100% { opacity: 0; transform: translate(-50%, -150%) scale(1.8); }
       }
     `;
     document.head.appendChild(style);
@@ -115,70 +117,86 @@ const ViralClicker = () => {
   };
 
   const getMotivationalText = () => {
-    if (totalClicks < 10) return "Every journey begins with a single click...";
-    if (totalClicks < 100) return "You're on fire! Keep going!";
-    if (totalClicks < 1000) return "The world is clicking together!";
-    if (totalClicks < 10000) return "This is getting MASSIVE!";
-    return "LEGENDARY STATUS ACHIEVED!";
+    if (totalClicks < 10) return "Join the clicking revolution! 🚀";
+    if (totalClicks < 100) return "You're unstoppable! Keep clicking! 💪";
+    if (totalClicks < 1000) return "The world is watching! Don't stop! 🌍";
+    if (totalClicks < 10000) return "VIRAL ALERT! This is insane! 🔥";
+    return "INTERNET LEGEND! You're making history! ⚡";
   };
 
   return (
-    <div className="w-full h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex flex-col items-center justify-center p-4 overflow-hidden relative">
+    <div className="w-full h-screen bg-gradient-to-br from-pink-500 via-purple-500 to-indigo-600 flex flex-col items-center justify-center p-4 overflow-hidden relative">
       
       {milestone && (
-        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-black px-8 py-4 rounded-full text-2xl font-bold animate-bounce z-50 shadow-2xl">
+        <div className="fixed top-20 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-full text-2xl md:text-3xl font-black animate-bounce z-50 shadow-2xl border-4 border-white">
           🎉 {formatNumber(milestone)} CLICKS! 🎉
         </div>
       )}
 
-      <div className="text-center mb-8 z-10">
-        <h1 className="text-6xl md:text-8xl font-black text-white mb-4 drop-shadow-2xl">
+      <div className="text-center mb-6 z-10">
+        <h1 className="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 mb-4 drop-shadow-2xl" style={{ fontFamily: "'Fredoka', 'Poppins', sans-serif", letterSpacing: '-0.02em' }}>
           THE BUTTON
         </h1>
-        <p className="text-xl md:text-2xl text-blue-200 font-semibold mb-2">
+        <p className="text-xl md:text-3xl text-white font-bold mb-2 drop-shadow-lg" style={{ fontFamily: "'Poppins', sans-serif" }}>
           {getMotivationalText()}
         </p>
       </div>
 
       <div className="mb-8 text-center z-10">
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl px-8 py-6 border-2 border-white/20 shadow-2xl">
-          <p className="text-sm text-blue-200 uppercase tracking-wider mb-2">Global Clicks</p>
-          <p className="text-6xl md:text-8xl font-black text-white">
+        <div className="bg-white/20 backdrop-blur-xl rounded-3xl px-10 py-8 border-4 border-white/40 shadow-2xl">
+          <p className="text-sm md:text-base text-yellow-200 uppercase tracking-wider mb-2 font-bold">🌎 Global Clicks 🌎</p>
+          <p className="text-7xl md:text-9xl font-black text-white drop-shadow-2xl" style={{ fontFamily: "'Fredoka', sans-serif" }}>
             {formatNumber(totalClicks)}
           </p>
-          <p className="text-sm text-blue-300 mt-2">People are clicking RIGHT NOW!</p>
+          <div className="mt-3 flex items-center justify-center gap-2">
+            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+            <p className="text-sm md:text-base text-green-200 font-semibold">Live • People clicking NOW!</p>
+          </div>
         </div>
       </div>
 
       <button
         onClick={handleClick}
-        className={`relative w-64 h-64 md:w-80 md:h-80 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 active:scale-95 transition-all duration-150 shadow-2xl pulse-glow float-animation ${showRipple ? 'ripple-effect' : ''}`}
+        className={`relative w-72 h-72 md:w-96 md:h-96 rounded-full bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600 hover:from-yellow-300 hover:via-pink-400 hover:to-purple-500 active:scale-90 transition-all duration-200 shadow-2xl border-8 border-white/50 ${showRipple ? 'ripple-effect' : ''}`}
+        style={{ 
+          boxShadow: '0 0 60px rgba(255, 255, 255, 0.5), 0 0 120px rgba(255, 105, 180, 0.4)',
+          animation: 'pulse-glow 1.5s ease-in-out infinite, float 3s ease-in-out infinite'
+        }}
       >
-        <div className="absolute inset-0 rounded-full bg-white/20 blur-xl"></div>
-        <span className="relative text-5xl md:text-6xl font-black text-white drop-shadow-lg">
-          CLICK ME
+        <div className="absolute inset-0 rounded-full bg-white/30 blur-2xl animate-pulse"></div>
+        <span className="relative text-5xl md:text-7xl font-black text-white drop-shadow-2xl" style={{ fontFamily: "'Fredoka', sans-serif", textShadow: '0 4px 20px rgba(0,0,0,0.5)' }}>
+          CLICK ME!
         </span>
       </button>
 
       <div className="mt-8 text-center z-10">
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl px-6 py-4 border border-white/20">
-          <p className="text-sm text-blue-200 mb-1">Your Clicks</p>
-          <p className="text-4xl font-bold text-white">{clicks.toLocaleString()}</p>
+        <div className="bg-white/20 backdrop-blur-xl rounded-3xl px-8 py-5 border-4 border-white/40 shadow-xl">
+          <p className="text-sm md:text-base text-yellow-200 mb-2 font-bold uppercase tracking-wide">⭐ Your Clicks ⭐</p>
+          <p className="text-5xl md:text-6xl font-black text-white drop-shadow-lg" style={{ fontFamily: "'Fredoka', sans-serif" }}>{clicks.toLocaleString()}</p>
           {clickSpeed > 1 && (
-            <p className="text-xs text-yellow-300 mt-1">🔥 {clickSpeed} clicks/sec!</p>
+            <div className="mt-2 bg-gradient-to-r from-orange-400 to-red-500 text-white px-4 py-1 rounded-full text-sm font-bold inline-block">
+              🔥 {clickSpeed} clicks/sec! 🔥
+            </div>
           )}
         </div>
       </div>
 
-      <div className="absolute bottom-4 text-center z-10 px-4">
-        <p className="text-sm text-white/60">Share with friends and watch the number grow! 🚀</p>
+      <div className="absolute bottom-6 text-center z-10 px-4">
+        <p className="text-lg md:text-xl text-white font-bold drop-shadow-lg" style={{ fontFamily: "'Poppins', sans-serif" }}>
+          💫 Share with friends and GO VIRAL! 💫
+        </p>
       </div>
 
-      <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
-        <div className="absolute top-10 left-10 w-32 h-32 bg-blue-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-10 right-10 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute top-1/2 left-1/2 w-64 h-64 bg-pink-500/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none overflow-hidden">
+        <div className="absolute top-20 left-20 w-40 h-40 bg-yellow-400/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-20 right-20 w-56 h-56 bg-pink-400/30 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/4 w-48 h-48 bg-purple-400/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl animate-pulse"></div>
       </div>
+
+      <style jsx>{`
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@700&family=Poppins:wght@400;600;700;800;900&display=swap');
+      `}</style>
     </div>
   );
 };
