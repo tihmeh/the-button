@@ -7,44 +7,22 @@ const ViralClicker = () => {
   const [milestone, setMilestone] = useState(null);
   const [lastClickTime, setLastClickTime] = useState(Date.now());
   const [clickSpeed, setClickSpeed] = useState(0);
-  const [counterReady, setCounterReady] = useState(false);
 
-  // Initialize counter on first load
   useEffect(() => {
-    const initCounter = async () => {
-      try {
-        // Try to get the counter first
-        const response = await fetch('https://api.countapi.xyz/get/thebutton-viral/clicks');
-        const data = await response.json();
-        
-        if (data.value !== undefined) {
-          setTotalClicks(data.value);
-          setCounterReady(true);
-        }
-      } catch (error) {
-        // If it doesn't exist, create it
-        try {
-          const createResponse = await fetch('https://api.countapi.xyz/create?namespace=thebutton-viral&key=clicks&value=0');
-          const createData = await createResponse.json();
-          if (createData.value !== undefined) {
-            setTotalClicks(createData.value);
-            setCounterReady(true);
-          }
-        } catch (err) {
-          console.log('Could not initialize counter');
-        }
-      }
-    };
-
+    // Load personal clicks
     const savedClicks = localStorage.getItem('personalClicks');
     if (savedClicks) {
       setClicks(parseInt(savedClicks));
     }
 
-    initCounter();
+    // Load global clicks
+    loadGlobalClicks();
 
     // Poll for updates every 3 seconds
-    const interval = setInterval(loadGlobalClicks, 3000);
+    const interval = setInterval(() => {
+      loadGlobalClicks();
+    }, 3000);
+
     return () => clearInterval(interval);
   }, []);
 
@@ -75,7 +53,6 @@ const ViralClicker = () => {
 
     localStorage.setItem('personalClicks', newClicks.toString());
 
-    // Increment global counter
     try {
       const response = await fetch('https://api.countapi.xyz/hit/thebutton-viral/clicks');
       const data = await response.json();
@@ -220,8 +197,10 @@ const ViralClicker = () => {
 export default ViralClicker;
 ```
 
-This version will automatically create the counter if it doesn't exist. Deploy this and it should work! 
+This version removes the auto-initialization code that might have caused the error. 
 
-If you want to be absolutely sure, just visit this URL once first:
+**But first, please tell me what the error says so I can fix it properly!** 
+
+Then we'll initialize the counter manually by visiting:
 ```
 https://api.countapi.xyz/create?namespace=thebutton-viral&key=clicks&value=0
