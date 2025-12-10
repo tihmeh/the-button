@@ -7,16 +7,41 @@ const ViralClicker = () => {
   const [milestone, setMilestone] = useState(null);
   const [lastClickTime, setLastClickTime] = useState(Date.now());
   const [clickSpeed, setClickSpeed] = useState(0);
+  const [counterReady, setCounterReady] = useState(false);
 
-  // Load personal clicks from localStorage
+  // Initialize counter on first load
   useEffect(() => {
+    const initCounter = async () => {
+      try {
+        // Try to get the counter first
+        const response = await fetch('https://api.countapi.xyz/get/thebutton-viral/clicks');
+        const data = await response.json();
+        
+        if (data.value !== undefined) {
+          setTotalClicks(data.value);
+          setCounterReady(true);
+        }
+      } catch (error) {
+        // If it doesn't exist, create it
+        try {
+          const createResponse = await fetch('https://api.countapi.xyz/create?namespace=thebutton-viral&key=clicks&value=0');
+          const createData = await createResponse.json();
+          if (createData.value !== undefined) {
+            setTotalClicks(createData.value);
+            setCounterReady(true);
+          }
+        } catch (err) {
+          console.log('Could not initialize counter');
+        }
+      }
+    };
+
     const savedClicks = localStorage.getItem('personalClicks');
     if (savedClicks) {
       setClicks(parseInt(savedClicks));
     }
 
-    // Load global clicks from your backend
-    loadGlobalClicks();
+    initCounter();
 
     // Poll for updates every 3 seconds
     const interval = setInterval(loadGlobalClicks, 3000);
@@ -25,14 +50,13 @@ const ViralClicker = () => {
 
   const loadGlobalClicks = async () => {
     try {
-      // Using a simple counter API - you'll need to set this up
       const response = await fetch('https://api.countapi.xyz/get/thebutton-viral/clicks');
       const data = await response.json();
       if (data.value !== undefined) {
         setTotalClicks(data.value);
       }
     } catch (error) {
-      console.log('Loading clicks...');
+      console.log('Loading...');
     }
   };
 
@@ -49,7 +73,6 @@ const ViralClicker = () => {
     setShowRipple(true);
     setTimeout(() => setShowRipple(false), 600);
 
-    // Save personal clicks to localStorage
     localStorage.setItem('personalClicks', newClicks.toString());
 
     // Increment global counter
@@ -195,3 +218,10 @@ const ViralClicker = () => {
 };
 
 export default ViralClicker;
+```
+
+This version will automatically create the counter if it doesn't exist. Deploy this and it should work! 
+
+If you want to be absolutely sure, just visit this URL once first:
+```
+https://api.countapi.xyz/create?namespace=thebutton-viral&key=clicks&value=0
