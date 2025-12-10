@@ -9,16 +9,13 @@ const ViralClicker = () => {
   const [clickSpeed, setClickSpeed] = useState(0);
 
   useEffect(() => {
-    // Load personal clicks
     const savedClicks = localStorage.getItem('personalClicks');
     if (savedClicks) {
       setClicks(parseInt(savedClicks));
     }
 
-    // Load global clicks
     loadGlobalClicks();
 
-    // Poll for updates every 3 seconds
     const interval = setInterval(() => {
       loadGlobalClicks();
     }, 3000);
@@ -102,21 +99,17 @@ const ViralClicker = () => {
     effect.textContent = '+1';
     effect.style.color = '#4ECDC4';
     effect.style.textShadow = '0 0 15px rgba(78, 205, 196, 0.8)';
-    effect.style.animation = 'float-up 1s ease-out forwards';
     
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes float-up {
-        0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-        100% { opacity: 0; transform: translate(-50%, -120%) scale(1.5); }
-      }
-    `;
-    document.head.appendChild(style);
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = '@keyframes floatUp { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(-50%, -120%) scale(1.5); } }';
+    document.head.appendChild(styleSheet);
     
+    effect.style.animation = 'floatUp 1s ease-out forwards';
     document.body.appendChild(effect);
+    
     setTimeout(() => {
       effect.remove();
-      style.remove();
+      styleSheet.remove();
     }, 1000);
   };
 
@@ -141,10 +134,10 @@ const ViralClicker = () => {
       )}
 
       <div className="text-center mb-4 z-10">
-        <h1 className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-lg" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <h1 className="text-4xl md:text-5xl font-black text-white mb-2 drop-shadow-lg">
           THE BUTTON
         </h1>
-        <p className="text-sm md:text-base text-white/90 font-semibold" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <p className="text-sm md:text-base text-white/90 font-semibold">
           Global Goal: 8 Billion Clicks
         </p>
       </div>
@@ -152,7 +145,7 @@ const ViralClicker = () => {
       <div className="mb-4 text-center z-10">
         <div className="bg-white/25 backdrop-blur-lg rounded-2xl px-6 py-4 border-2 border-white/40 shadow-xl">
           <p className="text-xs text-white/80 uppercase tracking-wide mb-1 font-semibold">Global Clicks</p>
-          <p className="text-5xl md:text-6xl font-black text-white drop-shadow-lg" style={{ fontFamily: "'Poppins', sans-serif" }}>
+          <p className="text-5xl md:text-6xl font-black text-white drop-shadow-lg">
             {formatNumber(totalClicks)}
           </p>
           <div className="mt-2 w-full bg-white/30 rounded-full h-2 overflow-hidden">
@@ -172,7 +165,7 @@ const ViralClicker = () => {
           boxShadow: '0 0 40px rgba(78, 205, 196, 0.6)'
         }}
       >
-        <span className="relative text-3xl md:text-4xl font-black text-white drop-shadow-lg" style={{ fontFamily: "'Poppins', sans-serif" }}>
+        <span className="relative text-3xl md:text-4xl font-black text-white drop-shadow-lg">
           CLICK
         </span>
       </button>
@@ -180,27 +173,14 @@ const ViralClicker = () => {
       <div className="mt-4 text-center z-10">
         <div className="bg-white/25 backdrop-blur-lg rounded-2xl px-6 py-3 border-2 border-white/40 shadow-lg">
           <p className="text-xs text-white/80 mb-1 font-semibold uppercase tracking-wide">Your Clicks</p>
-          <p className="text-3xl md:text-4xl font-black text-white" style={{ fontFamily: "'Poppins', sans-serif" }}>{clicks.toLocaleString()}</p>
+          <p className="text-3xl md:text-4xl font-black text-white">{clicks.toLocaleString()}</p>
           {clickSpeed > 1 && (
             <p className="text-xs text-emerald-200 mt-1 font-bold">🔥 {clickSpeed}/sec</p>
           )}
         </div>
       </div>
-
-      <style jsx>{`
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap');
-      `}</style>
     </div>
   );
 };
 
 export default ViralClicker;
-```
-
-This version removes the auto-initialization code that might have caused the error. 
-
-**But first, please tell me what the error says so I can fix it properly!** 
-
-Then we'll initialize the counter manually by visiting:
-```
-https://api.countapi.xyz/create?namespace=thebutton-viral&key=clicks&value=0
